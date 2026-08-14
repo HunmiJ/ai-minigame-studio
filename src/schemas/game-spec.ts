@@ -16,12 +16,14 @@ const enemy = z.strictObject({ name: shortText(32), description: shortText(100),
 export const DodgeGameSpecSchema = z.strictObject({ ...base, genre: z.literal("dodge"), enemies: z.array(enemy).min(1).max(1) }).superRefine((game, context) => { const item = game.enemies[0]; if (item.maxSpeed < item.minSpeed) context.addIssue({ code: "custom", path: ["enemies", 0, "maxSpeed"], message: "速度范围无效" }); if (item.maxSize < item.minSize) context.addIssue({ code: "custom", path: ["enemies", 0, "maxSize"], message: "尺寸范围无效" }); });
 export const CollectGameSpecSchema = z.strictObject({ ...base, genre: z.literal("collect"), collect: z.strictObject({ targetCount: z.number().int().min(1).max(100), collectibleKind: z.enum(["coin", "pearl", "star", "gem"]), hazardKind: z.enum(["rock", "jellyfish", "bomb", "meteor"]), coinSpawnInterval: z.number().min(.25).max(2), coinSize: z.number().int().min(10).max(42), coinSpeed: z.number().int().min(80).max(420), dangerSpawnInterval: z.number().min(.4).max(3), dangerSize: z.number().int().min(12).max(50), dangerSpeed: z.number().int().min(80).max(480) }) });
 export const MazeGameSpecSchema = z.strictObject({ ...base, genre: z.literal("maze"), maze: z.strictObject({ gridWidth: z.number().int().min(9).max(31).refine((value) => value % 2 === 1, "网格宽度必须为奇数"), gridHeight: z.number().int().min(9).max(31).refine((value) => value % 2 === 1, "网格高度必须为奇数"), seed: z.number().int().min(0).max(2_147_483_647), moveInterval: z.number().min(.08).max(.6), collectibleCount: z.number().int().min(0).max(12) }) });
-export const GameSpecSchema = z.discriminatedUnion("genre", [DodgeGameSpecSchema, CollectGameSpecSchema, MazeGameSpecSchema]);
+export const SnakeGameSpecSchema = z.strictObject({ ...base, genre: z.literal("snake"), snake: z.strictObject({ columns: z.number().int().min(10).max(30), rows: z.number().int().min(8).max(24), initialLength: z.number().int().min(2).max(8), tickInterval: z.number().min(.08).max(.5), foodScore: z.number().int().min(1).max(100), targetScore: z.number().int().min(1).max(2_000), seed: z.number().int().min(0).max(2_147_483_647) }).superRefine((snake, context) => { if (snake.initialLength >= snake.columns - 1) context.addIssue({ code: "custom", path: ["initialLength"], message: "初始长度过长" }); }) });
+export const GameSpecSchema = z.discriminatedUnion("genre", [DodgeGameSpecSchema, CollectGameSpecSchema, MazeGameSpecSchema, SnakeGameSpecSchema]);
 export const StyleIdSchema = z.enum(["deep-space", "retro-arcade", "fresh-pixel"]);
 export const GenerateRequestSchema = z.strictObject({ prompt: z.string().trim().min(10, "请至少输入 10 个字符的游戏创意").max(500, "游戏创意不能超过 500 字符"), styleId: StyleIdSchema });
 export type GameSpec = z.infer<typeof GameSpecSchema>;
 export type DodgeGameSpec = z.infer<typeof DodgeGameSpecSchema>;
 export type CollectGameSpec = z.infer<typeof CollectGameSpecSchema>;
 export type MazeGameSpec = z.infer<typeof MazeGameSpecSchema>;
+export type SnakeGameSpec = z.infer<typeof SnakeGameSpecSchema>;
 export type GameStyleId = z.infer<typeof StyleIdSchema>;
 export type VisualTheme = z.infer<typeof VisualThemeSchema>;

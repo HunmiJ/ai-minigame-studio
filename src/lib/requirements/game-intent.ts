@@ -26,7 +26,7 @@ const themeMatchers: Array<[VisualTheme, RegExp]> = [
   ["ice", /冰雪|寒冰|极地|冰川/], ["forest", /森林|丛林|自然/],
   ["neon", /霓虹|赛博朋克/], ["desert", /沙漠|黄沙/], ["space", /太空|星际|宇宙|陨石/],
 ];
-const unsupportedMatchers: Array<[string, RegExp]> = [["贪吃蛇", /贪吃蛇|snake/i], ["2048", /2048/]];
+const unsupportedMatchers: Array<[string, RegExp]> = [["2048", /2048/]];
 const collectKinds = ["珍珠", "金币", "星星", "宝石"];
 const hazardKinds = ["水母", "炸弹", "陨石", "岩石"];
 
@@ -41,7 +41,7 @@ function findKeywords(prompt: string, candidates: string[]) {
 }
 
 export function extractGameIntent(prompt: string): GameIntent {
-  const genre = /迷宫|出口|探索/.test(prompt) ? "maze" : /接金币|收集|接住|珍珠|金币|宝石|星星/.test(prompt) ? "collect" : /躲避|闪避|生存|陨石/.test(prompt) ? "dodge" : undefined;
+  const genre = /贪吃蛇|蛇吃食物|身体变长|snake/i.test(prompt) ? "snake" : /迷宫|出口|探索/.test(prompt) ? "maze" : /接金币|收集|接住|珍珠|金币|宝石|星星/.test(prompt) ? "collect" : /躲避|闪避|生存|陨石/.test(prompt) ? "dodge" : undefined;
   const visualTheme = themeMatchers.find(([, matcher]) => matcher.test(prompt))?.[0];
   const unsupportedFeatures = unsupportedMatchers.filter(([, matcher]) => matcher.test(prompt)).map(([name]) => name);
   const duration = firstNumber(prompt, /(\d+)\s*(?:秒|s\b)/i);

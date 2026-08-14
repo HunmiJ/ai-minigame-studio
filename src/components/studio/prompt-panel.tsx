@@ -7,9 +7,9 @@ import type { GameSpec, GameStyleId, VisualTheme } from "@/types/game";
 
 export type IdeaSource = "custom" | GameSpec["genre"];
 type Props = { prompt: string; source: IdeaSource; genre: GameSpec["genre"]; visualTheme: VisualTheme; selectedStyle: GameStyleId; onPromptChange: (value: string) => void; onTemplateSelect: (genre: GameSpec["genre"]) => void; onStyleChange: (style: GameStyleId) => void; onGenerate: () => void; feedback: GenerationFeedback; activityNotice: string; mode: "ai" | "demo"; serviceStatus: DeepSeekServiceStatus };
-const labels = { dodge: "躲避类", collect: "接金币类", maze: "迷宫类" };
+const labels = { dodge: "躲避类", collect: "接金币类", maze: "迷宫类", snake: "贪吃蛇" };
 export const visualThemeLabels: Record<VisualTheme, string> = { space: "太空", ocean: "海洋", lava: "熔岩", ice: "冰雪", forest: "森林", neon: "霓虹", desert: "沙漠" };
-const templates: [GameSpec["genre"], string][] = [["dodge", "星际闪避"], ["collect", "接金币"], ["maze", "迷你迷宫"]];
+const templates: [GameSpec["genre"], string][] = [["dodge", "星际闪避"], ["collect", "接金币"], ["maze", "迷你迷宫"], ["snake", "贪吃蛇"]];
 
 export function PromptPanel(props: Props) {
   const isGenerating = props.feedback.status === "loading";
