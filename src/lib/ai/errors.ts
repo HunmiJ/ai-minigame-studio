@@ -1,7 +1,7 @@
-export type GenerateErrorCode = "invalid_request" | "not_configured" | "rate_limited" | "authentication_failed" | "insufficient_balance" | "model_refusal" | "model_incomplete" | "invalid_json" | "invalid_output" | "timeout" | "service_unavailable";
+export type GenerateErrorCode = "invalid_request" | "not_configured" | "unsupported_engine" | "rate_limited" | "authentication_failed" | "insufficient_balance" | "model_refusal" | "model_incomplete" | "invalid_json" | "invalid_output" | "timeout" | "service_unavailable";
 
 export class GenerateGameError extends Error { constructor(public readonly code: GenerateErrorCode, message: string) { super(message); this.name = "GenerateGameError"; } }
-export function errorStatus(code: GenerateErrorCode) { if (code === "invalid_request") return 400; if (code === "not_configured" || code === "service_unavailable") return 503; if (code === "rate_limited") return 429; if (code === "timeout") return 504; if (code === "authentication_failed") return 401; if (code === "insufficient_balance") return 402; return 422; }
+export function errorStatus(code: GenerateErrorCode) { if (code === "invalid_request") return 400; if (code === "unsupported_engine") return 422; if (code === "not_configured" || code === "service_unavailable") return 503; if (code === "rate_limited") return 429; if (code === "timeout") return 504; if (code === "authentication_failed") return 401; if (code === "insufficient_balance") return 402; return 422; }
 
 export function toSafeGenerateError(error: unknown) {
   if (error instanceof GenerateGameError) return error;
