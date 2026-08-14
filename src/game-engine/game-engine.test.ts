@@ -4,7 +4,7 @@ import { createGameState } from "./create-state";
 import { updateGame } from "./update";
 import type { GameConfig } from "./types";
 
-const config: GameConfig = { world: { name: "test", width: 200, height: 100, duration: 30 }, player: { name: "ship", description: "test", lives: 3, speed: 100, size: 10 }, enemies: [{ name: "rock", description: "test", spawnInterval: 100, minSpeed: 1, maxSpeed: 1, sizeRange: [5, 5] }], rules: { summary: [], scorePerSecond: 100 }, theme: { primary: "", accent: "", atmosphere: "", background: "#000", playerColor: "#fff", meteorColor: "#aaa", particleColor: "#f00", accentColor: "#0ff", nebulaColor: "#224" } };
+const config: GameConfig = { title: "test", world: { name: "test", width: 200, height: 100, duration: 30 }, player: { name: "ship", description: "test", lives: 3, speed: 100, size: 10 }, enemies: [{ name: "rock", description: "test", spawnInterval: 100, minSpeed: 40, maxSpeed: 60, minSize: 10, maxSize: 12 }], rules: { summary: [], scorePerSecond: 100 }, theme: { primary: "", accent: "", atmosphere: "", background: "#000", playerColor: "#fff", meteorColor: "#aaa", particleColor: "#f00", accentColor: "#0ff", nebulaColor: "#224" } };
 const random = () => .5;
 
 describe("game engine", () => {

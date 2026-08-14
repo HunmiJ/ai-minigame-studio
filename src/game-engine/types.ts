@@ -1,4 +1,4 @@
-import type { GameSpec } from "@/types/game";
+import type { GameSpec } from "@/schemas/game-spec";
 
 export type GameStatus = "ready" | "running" | "paused" | "won" | "lost";
 export type InputState = { up: boolean; down: boolean; left: boolean; right: boolean };
@@ -7,4 +7,4 @@ export type Meteor = Vector & { radius: number; speed: number; rotation: number;
 export type Particle = Vector & { vx: number; vy: number; life: number; maxLife: number; size: number };
 export type Star = Vector & { radius: number; alpha: number };
 export type GameState = { status: GameStatus; player: Vector & { radius: number; lives: number; invincibleFor: number; hitFlashFor: number }; meteors: Meteor[]; particles: Particle[]; stars: Star[]; score: number; timeLeft: number; spawnTimer: number; elapsed: number };
-export type GameConfig = Pick<GameSpec, "world" | "player" | "enemies" | "rules" | "theme">;
+export type GameConfig = Pick<GameSpec, "title" | "world" | "player" | "enemies" | "rules" | "theme">;

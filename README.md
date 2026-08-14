@@ -1,5 +1,9 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## 本地 AI 配置
+
+复制 `.env.example` 中的占位项到你的本地环境配置，并设置 `DEEPSEEK_API_KEY`；可选地设置 `DEEPSEEK_BASE_URL` 和 `DEEPSEEK_MODEL`，默认模型为 `deepseek-v4-flash`。不要提交真实密钥或 `.env.local`。未配置密钥时，Studio 会保留可试玩的 Demo 回退模式。
+
 ## Getting Started
 
 First, run the development server:

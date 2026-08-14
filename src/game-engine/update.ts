@@ -3,7 +3,7 @@ import { circlesCollide, clampPlayerPosition } from "./collision";
 import type { GameConfig, GameState, InputState, Meteor, Particle } from "./types";
 
 function spawnMeteor(config: GameConfig, state: GameState, random: () => number): Meteor {
-  const enemy = config.enemies[0]; const [minSize, maxSize] = enemy.sizeRange; const radius = minSize + random() * (maxSize - minSize); const difficulty = Math.min(state.elapsed / config.world.duration, 1);
+  const enemy = config.enemies[0]; const radius = enemy.minSize + random() * (enemy.maxSize - enemy.minSize); const difficulty = Math.min(state.elapsed / config.world.duration, 1);
   return { x: radius + random() * (config.world.width - radius * 2), y: -radius - 4, radius, speed: enemy.minSpeed + random() * (enemy.maxSpeed - enemy.minSpeed) + difficulty * 85, rotation: random() * Math.PI * 2, spin: (random() - .5) * 2.8 };
 }
 function hitParticles(player: GameState["player"], random: () => number): Particle[] { return Array.from({ length: 16 }, () => { const angle = random() * Math.PI * 2; const speed = 70 + random() * 150; return { x: player.x, y: player.y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, life: .52, maxLife: .52, size: 2 + random() * 4 }; }); }
