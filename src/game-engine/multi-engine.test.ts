@@ -1,0 +1,14 @@
+import { describe, expect, it } from "vitest";
+import { collectDemoGame, mazeDemoGame } from "@/data/demo-game";
+import { createCollectState, updateCollect } from "./collect";
+import { createMaze, createMazeState, updateMaze } from "./maze";
+import { EMPTY_INPUT } from "./constants";
+
+describe("collect engine", () => {
+  it("uses actual collected count rather than score to decide victory", () => { const config={...collectDemoGame,collect:{...collectDemoGame.collect,targetCount:15}}; const state=createCollectState(config); state.status="running"; state.collectedCount=14; state.score=9999; state.coins=[{x:state.x,y:config.world.height-config.player.size*1.7,radius:10,speed:0}]; const winning=updateCollect(state,config,EMPTY_INPUT,.01,()=>.5); expect(winning.collectedCount).toBe(15); expect(winning.score).toBe(10000); expect(winning.status).toBe("won"); const fourteen=updateCollect({...state,coins:[],collectedCount:14,score:50000},config,EMPTY_INPUT,.01,()=>.5); expect(fourteen.status).toBe("running"); expect(winning.lives).toBe(3); expect(winning.timeLeft).toBeCloseTo(29.99); });
+  it("danger and timeout cause loss, paused state does not update", () => { const state=createCollectState(collectDemoGame); state.status="running"; state.dangers=[{x:state.x,y:collectDemoGame.world.height-collectDemoGame.player.size*1.7,radius:10,speed:0}]; const hit=updateCollect(state,collectDemoGame,EMPTY_INPUT,.01,()=>.5); expect(hit.lives).toBe(2); const lost=updateCollect({...hit,lives:1,invincibleFor:0,dangers:[{x:hit.x,y:collectDemoGame.world.height-40,radius:10,speed:0}]},collectDemoGame,EMPTY_INPUT,.01,()=>.5); expect(lost.status).toBe("lost"); expect(updateCollect({...state,status:"paused"},collectDemoGame,EMPTY_INPUT,2)).toEqual({...state,status:"paused"}); });
+});
+describe("maze engine", () => {
+  it("is deterministic and has a reachable exit", () => { const map=createMaze(mazeDemoGame.maze.gridWidth,mazeDemoGame.maze.gridHeight,mazeDemoGame.maze.seed); expect(map).toEqual(createMaze(mazeDemoGame.maze.gridWidth,mazeDemoGame.maze.gridHeight,mazeDemoGame.maze.seed)); const queue:[[number,number]]=[[1,1]],seen=new Set(["1,1"]);while(queue.length){const [x,y]=queue.shift()!;for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,key=`${nx},${ny}`;if(!map[ny]?.[nx]&&!seen.has(key)){seen.add(key);queue.push([nx,ny])}}}expect(seen.has(`${mazeDemoGame.maze.gridWidth-2},${mazeDemoGame.maze.gridHeight-2}`)).toBe(true); });
+  it("blocks walls and wins at exit", () => { const state=createMazeState(mazeDemoGame);state.status="running";const blocked=updateMaze(state,mazeDemoGame,{...EMPTY_INPUT,left:true},.2);expect(blocked.x).toBe(1); const win=updateMaze({...state,x:mazeDemoGame.maze.gridWidth-3,y:mazeDemoGame.maze.gridHeight-2,moveCooldown:0},mazeDemoGame,{...EMPTY_INPUT,right:true},.2);expect(win.status).toBe("won"); });
+});

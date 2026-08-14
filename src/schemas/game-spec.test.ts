@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { createStyledDemoGame, demoGame, demoGameStyles } from "@/data/demo-game";
+import { collectDemoGame, createStyledDemoGame, demoGame, demoGameStyles, mazeDemoGame } from "@/data/demo-game";
 import { GameSpecSchema, GenerateRequestSchema } from "./game-spec";
 
 describe("GameSpecSchema", () => {
   it("accepts the playable demo game", () => { expect(GameSpecSchema.safeParse(demoGame).success).toBe(true); });
+  it("accepts all three supported game genres", () => { expect(GameSpecSchema.safeParse(collectDemoGame).success).toBe(true); expect(GameSpecSchema.safeParse(mazeDemoGame).success).toBe(true); });
+  it("rejects invalid genre and cross-genre configuration", () => { expect(GameSpecSchema.safeParse({ ...collectDemoGame, genre: "shoot" }).success).toBe(false); expect(GameSpecSchema.safeParse({ ...collectDemoGame, enemies: demoGame.enemies }).success).toBe(false); });
+  it("accepts safe collect visuals and rejects unknown kinds", () => { const underwater={...collectDemoGame,title:"海底珍珠挑战",world:{...collectDemoGame.world,duration:30},player:{...collectDemoGame.player,lives:3},collect:{...collectDemoGame.collect,targetCount:15,collectibleKind:"pearl" as const,hazardKind:"jellyfish" as const}}; expect(GameSpecSchema.safeParse(underwater).success).toBe(true); expect(GameSpecSchema.safeParse({...underwater,collect:{...underwater.collect,collectibleKind:"url"}}).success).toBe(false); });
+  it("validates controlled visual themes and defaults old games to space", () => { const old=structuredClone(demoGame) as Record<string, unknown>; delete old.visualTheme; expect(GameSpecSchema.parse(old).visualTheme).toBe("space"); expect(GameSpecSchema.safeParse({...demoGame,visualTheme:"ocean"}).success).toBe(true); expect(GameSpecSchema.safeParse({...demoGame,visualTheme:"url"}).success).toBe(false); });
   it("accepts every type-safe style variation", () => { Object.keys(demoGameStyles).forEach((styleId) => expect(GameSpecSchema.safeParse(createStyledDemoGame(styleId as keyof typeof demoGameStyles)).success).toBe(true)); });
   it("rejects empty prompts and invalid style ids", () => { expect(GenerateRequestSchema.safeParse({ prompt: "  ", styleId: "deep-space" }).success).toBe(false); expect(GenerateRequestSchema.safeParse({ prompt: "足够长的躲避游戏创意", styleId: "maze" }).success).toBe(false); });
   it("rejects unsafe values and invalid colors", () => { const unsafe = structuredClone(demoGame); unsafe.player.lives = 8; unsafe.world.duration = 120; unsafe.player.speed = 800; unsafe.theme.background = "javascript:alert(1)"; expect(GameSpecSchema.safeParse(unsafe).success).toBe(false); });

@@ -37,6 +37,13 @@ describe("saved games storage", () => {
     expect(readSavedGames(storage).map((game) => game.id)).toEqual(["valid"]);
   });
 
+  it("loads legacy saved dodge work with the safe default visual theme", () => {
+    const storage = new MemoryStorage(); const saved = createSavedGame(draft, { id: "legacy", updatedAt: "2026-08-14T00:00:00.000Z" });
+    const legacy = JSON.parse(JSON.stringify(saved)) as { gameSpec: Record<string, unknown> }; delete legacy.gameSpec.visualTheme;
+    storage.setItem(SAVED_GAMES_STORAGE_KEY, JSON.stringify([legacy]));
+    expect(readSavedGames(storage)[0].gameSpec.visualTheme).toBe("space");
+  });
+
   it("rejects invalid GameSpec while saving", () => {
     expect(() => createSavedGame({ ...draft, gameSpec: { ...demoGame, title: "", } })).toThrow("作品数据无效");
   });

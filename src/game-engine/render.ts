@@ -1,8 +1,8 @@
 import type { GameConfig, GameState } from "./types";
+import { renderVisualTheme } from "./visual-theme";
 
 export function renderGame(ctx: CanvasRenderingContext2D, state: GameState, config: GameConfig) {
-  const { width, height } = config.world; ctx.clearRect(0, 0, width, height);
-  const gradient = ctx.createRadialGradient(width * .72, height * .27, 4, width * .65, height * .35, width * .68); gradient.addColorStop(0, `${config.theme.nebulaColor}aa`); gradient.addColorStop(.48, `${config.theme.accentColor}35`); gradient.addColorStop(1, config.theme.background); ctx.fillStyle = gradient; ctx.fillRect(0, 0, width, height);
+  const { width, height } = config.world; ctx.clearRect(0, 0, width, height); renderVisualTheme(ctx, config.visualTheme ?? "space", width, height, state.elapsed);
   state.stars.forEach((star, index) => { ctx.globalAlpha = star.alpha * (.7 + .3 * Math.sin(state.elapsed * 2 + index)); ctx.fillStyle = "#d8f7ff"; ctx.beginPath(); ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2); ctx.fill(); }); ctx.globalAlpha = 1;
   state.meteors.forEach((meteor) => { ctx.save();ctx.translate(meteor.x, meteor.y);ctx.rotate(meteor.rotation); const rock = ctx.createRadialGradient(-meteor.radius*.3,-meteor.radius*.35,1,0,0,meteor.radius);rock.addColorStop(0,"#ffffff");rock.addColorStop(.42,config.theme.meteorColor);rock.addColorStop(1,config.theme.background);ctx.fillStyle=rock;ctx.beginPath();ctx.arc(0,0,meteor.radius,0,Math.PI*2);ctx.fill();ctx.fillStyle=config.theme.accentColor;ctx.globalAlpha=.42;ctx.beginPath();ctx.arc(meteor.radius*.26,-meteor.radius*.2,meteor.radius*.18,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(-meteor.radius*.3,meteor.radius*.25,meteor.radius*.12,0,Math.PI*2);ctx.fill();ctx.restore(); });
   state.particles.forEach((particle) => { ctx.globalAlpha = particle.life / particle.maxLife; ctx.fillStyle = config.theme.particleColor; ctx.fillRect(particle.x - particle.size / 2, particle.y - particle.size / 2, particle.size, particle.size); }); ctx.globalAlpha = 1;
