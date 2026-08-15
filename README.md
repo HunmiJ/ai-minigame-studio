@@ -125,7 +125,7 @@ npm.cmd run start    # 启动生产服务器
 
 - AI 生成依赖服务端 DeepSeek 配置，未配置时使用 Demo 回退。
 - 作品目前只保存在浏览器 localStorage，不支持账号、云同步和跨设备协作。
-- 在线试玩地址：https://ai-minigame-studio.onrender.com。
+- 在线试玩地址：https://ai-minigame-studio.onrender.com
 - 演示视频将于后续补充。
 - 后续可继续完善更多主题动效、作品分享和可选的服务端持久化；新增玩法仍需先实现受控引擎与 Schema。
 
