@@ -1,5 +1,9 @@
 # AI MiniGame Studio
 
+> **在线试玩：** https://ai-minigame-studio.onrender.com
+>
+> 该演示部署在 Render 免费套餐上；若服务空闲，首次访问可能需要约一分钟唤醒。
+
 AI MiniGame Studio 是一个通过自然语言生成可玩小游戏配置，并在浏览器中即时试玩的 Web 工具。它将 AI 生成限制在经过校验的 `GameSpec` 数据内，由本地受控游戏引擎负责运行，适合作为 AI 应用与前端工程实践作品展示。
 
 ![AI MiniGame Studio 首页效果图](docs/images/home.png)
