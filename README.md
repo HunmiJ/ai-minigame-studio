@@ -1,3 +1,4 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/HunmiJ/ai-minigame-studio/actions/workflows/ci.yml/badge.svg)](https://github.com/HunmiJ/ai-minigame-studio/actions/workflows/ci.yml)
 
 # AI MiniGame Studio
@@ -134,3 +135,8 @@ npm.cmd run start    # 启动生产服务器
 ## 简历项目亮点
 
 > 独立实现基于 Next.js、TypeScript 和 DeepSeek 的自然语言小游戏生成工作台：通过 Zod 严格 GameSpec、需求匹配和受控 Canvas 引擎保障 AI 输出安全运行；完成 dodge、collect、maze、snake、2048 五类游戏、七种程序化视觉主题、响应式交互及 localStorage 作品库，并配套 Vitest 自动化测试与生产构建流程。
+
+
+## 许可证
+
+本项目采用 [MIT License](LICENSE)，欢迎学习、复用和二次创作，并请保留原始版权与许可证声明。
