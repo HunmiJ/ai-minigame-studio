@@ -1,4 +1,4 @@
-import type { GameSpec, GameStyle, GameStyleId } from "@/types/game";
+import type { GameSpec, GameStyle, GameStyleId, VisualTheme } from "@/types/game";
 
 const theme = { primary: "靛蓝", accent: "青色", atmosphere: "安静而紧张的深空", background: "#071126", playerColor: "#66efff", meteorColor: "#77829d", particleColor: "#ff7f9d", accentColor: "#8d7dff", nebulaColor: "#6d42bc" };
 const common = { version: "1.0" as const, world: { name: "深空挑战", width: 960, height: 540, duration: 30 }, player: { name: "探索者号", description: "灵活的小型飞船", lives: 3, speed: 330, size: 26 }, controls: { keys: ["ArrowUp", "KeyW", "ArrowLeft", "KeyA"], description: "方向键 / WASD / 触屏按钮操作" }, theme };
@@ -8,5 +8,6 @@ export const mazeDemoGame = { ...common, title: "迷你迷宫", description: "�
 export const snakeDemoGame = { ...common, title: "霓虹贪吃蛇", description: "操控小蛇收集食物，避免撞墙或撞到自己。", visualTheme: "neon" as const, genre: "snake" as const, rules: { summary: ["方向键或 WASD 控制方向", "吃到食物后身体变长", "达到目标分数即可获胜"], scorePerSecond: 1 }, snake: { columns: 20, rows: 14, initialLength: 3, tickInterval: .16, foodScore: 10, targetScore: 120, seed: 20260815 } } satisfies GameSpec;
 export const game2048DemoGame = { ...common, title: "经典 2048", description: "滑动数字方块，合并出 2048。", visualTheme: "ice" as const, genre: "2048" as const, rules: { summary: ["方向键或 WASD 滑动方块", "相同数字会合并", "合成 2048 即可获胜"], scorePerSecond: 1 }, game2048: { boardSize: 4, targetTile: 2048, seed: 20260816 } } satisfies GameSpec;
 export const demoGameStyles: Record<GameStyleId, GameStyle> = { "deep-space": { id: "deep-space", label: "深空霓虹", theme }, "retro-arcade": { id: "retro-arcade", label: "复古街机", theme: { ...theme, primary: "紫红", accent: "琥珀", background: "#1a103d", playerColor: "#ffe15b", meteorColor: "#ff8b5e", particleColor: "#ff4e8a", accentColor: "#ff6db1", nebulaColor: "#6e2c87" } }, "fresh-pixel": { id: "fresh-pixel", label: "清新像素", theme: { ...theme, primary: "薄荷绿", accent: "天青", background: "#083b4b", playerColor: "#d9ff84", meteorColor: "#73c7c2", particleColor: "#ffb86f", accentColor: "#77e6c4", nebulaColor: "#207e8d" } } };
+export const styleVisualThemes: Record<GameStyleId, VisualTheme> = { "deep-space": "space", "retro-arcade": "neon", "fresh-pixel": "forest" };
 export const demoGames = { dodge: demoGame, collect: collectDemoGame, maze: mazeDemoGame, snake: snakeDemoGame, "2048": game2048DemoGame } as const;
-export function createStyledDemoGame(styleId: GameStyleId, genre: GameSpec["genre"] = "dodge"): GameSpec { return { ...demoGames[genre], theme: demoGameStyles[styleId].theme }; }
+export function createStyledDemoGame(styleId: GameStyleId, genre: GameSpec["genre"] = "dodge"): GameSpec { return { ...demoGames[genre], visualTheme: styleVisualThemes[styleId], theme: demoGameStyles[styleId].theme }; }

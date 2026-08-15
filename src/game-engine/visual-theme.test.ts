@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { collectDemoGame, demoGame, mazeDemoGame } from "@/data/demo-game";
-import { getVisualThemeTokens, normalizeVisualTheme, renderVisualTheme } from "./visual-theme";
+import { collectDemoGame, demoGame, game2048DemoGame, mazeDemoGame, snakeDemoGame } from "@/data/demo-game";
+import { getThemeProfile, getVisualThemeTokens, normalizeVisualTheme, renderVisualTheme } from "./visual-theme";
 
 function context() {
   const gradient = { addColorStop: vi.fn() };
@@ -16,4 +16,6 @@ describe("visual theme normalization", () => {
   it("does not throw while rendering invalid runtime values", () => { for (const value of [undefined, null, "", "unknown"]) expect(() => renderVisualTheme(context().ctx, value, 960, 540)).not.toThrow(); });
   it("keeps legal themes on the dodge, collect and maze configurations", () => { expect(normalizeVisualTheme(demoGame.visualTheme)).toBe("space"); expect(normalizeVisualTheme(collectDemoGame.visualTheme)).toBe("neon"); expect(normalizeVisualTheme(mazeDemoGame.visualTheme)).toBe("forest"); });
   it("exposes safe rendering tokens for every theme and falls back for invalid values", () => { for (const theme of ["space", "ocean", "lava", "ice", "forest", "neon", "desert"]) expect(getVisualThemeTokens(theme).hud).toMatch(/^#/); expect(getVisualThemeTokens(undefined).wall).toBe(getVisualThemeTokens("space").wall); expect(getVisualThemeTokens("ocean").collectible).not.toBe(getVisualThemeTokens("lava").collectible); });
+  it("gives every game engine the same complete seven-theme profile", () => { const games = [demoGame, collectDemoGame, mazeDemoGame, snakeDemoGame, game2048DemoGame]; const themes = ["space", "ocean", "lava", "ice", "forest", "neon", "desert"] as const; for (const game of games) for (const theme of themes) { const profile = getThemeProfile(theme); expect(profile.id).toBe(theme); expect(profile.elements).toHaveLength(3); expect(profile.tiles.length).toBeGreaterThan(3); expect(normalizeVisualTheme({ ...game, visualTheme: theme }.visualTheme)).toBe(theme); } });
+  it("uses distinct non-colour theme descriptors for ocean, ice and forest", () => { expect(getThemeProfile("ocean").elements).toEqual(["光束", "气泡", "海草"]); expect(getThemeProfile("ice").elements).toEqual(["雪花", "冰晶", "霜边"]); expect(getThemeProfile("forest").elements).toEqual(["树木", "藤蔓", "萤火虫"]); });
 });

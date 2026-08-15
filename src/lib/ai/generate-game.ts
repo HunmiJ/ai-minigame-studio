@@ -1,5 +1,5 @@
 import "server-only";
-import { demoGameStyles } from "@/data/demo-game";
+import { demoGameStyles, styleVisualThemes } from "@/data/demo-game";
 import { applyExplicitRequirements, evaluateRequirementMatch, extractGameIntent, hasUnsupportedIntent } from "@/lib/requirements/game-intent";
 import { GameSpecSchema, type GameSpec, type GameStyleId } from "@/schemas/game-spec";
 import { getDeepSeekClient, getDeepSeekModel } from "./deepseek-client";
@@ -48,7 +48,8 @@ export async function generateGameSpec({ prompt, styleId }: { prompt: string; st
         if (call === 0) { repair = { json, issues: issueSummary(parsed.error.issues) }; continue; }
         throw new GenerateGameError("invalid_output", "AI 返回的游戏规格无法安全运行，请重试。");
       }
-      const merged = GameSpecSchema.safeParse(applyExplicitRequirements(parsed.data, intent));
+      const explicitGame = applyExplicitRequirements(parsed.data, intent);
+      const merged = GameSpecSchema.safeParse(intent.visualTheme ? explicitGame : { ...explicitGame, visualTheme: styleVisualThemes[styleId] });
       if (merged.success) {
         const match = evaluateRequirementMatch(intent, merged.data);
         if (match.primarySatisfied) return merged.data;
