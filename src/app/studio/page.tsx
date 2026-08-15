@@ -13,7 +13,7 @@ import { getGenerationFailureMessage, type DeepSeekServiceStatus } from "@/lib/s
 import type { GameSpec, GameStyleId } from "@/types/game";
 import type { SavedGameSource } from "@/types/saved-game";
 
-const prompts = { dodge: "生成一个太空主题的躲避游戏，玩家使用方向键移动，坚持 30 秒即可获胜。", collect: "生成一个接金币小游戏，玩家左右移动接住金币并避开危险物。", maze: "生成一个可探索的迷你迷宫，玩家找到出口即可获胜。", snake: "生成一个霓虹贪吃蛇游戏，吃到食物后身体变长，撞墙或撞到自己失败。" } as const;
+const prompts = { dodge: "生成一个太空主题的躲避游戏，玩家使用方向键移动，坚持 30 秒即可获胜。", collect: "生成一个接金币小游戏，玩家左右移动接住金币并避开危险物。", maze: "生成一个可探索的迷你迷宫，玩家找到出口即可获胜。", snake: "生成一个霓虹贪吃蛇游戏，吃到食物后身体变长，撞墙或撞到自己失败。", "2048": "生成一个冰雪主题的经典 2048 游戏，通过滑动数字方块合成 2048。" } as const;
 const emptyMatch = (): RequirementMatch => ({ met: [], adapted: [], unsupported: [], primarySatisfied: false });
 
 export default function StudioPage() {
@@ -66,7 +66,7 @@ export default function StudioPage() {
     } catch { setServiceStatus("connected"); setFeedback(errorGenerationFeedback("DeepSeek 已连接，但本次生成失败；当前 Demo 已保留。请检查网络后重新尝试。")); }
   };
   const changeStyle = (nextStyle: GameStyleId) => { clearGenerationMessages(); setStyle(nextStyle); markUnsaved(); if (mode === "demo") { setGame(createStyledDemoGame(nextStyle, game.genre)); setResetToken((token) => token + 1); setActivityNotice(`Demo 游戏已切换为“${demoGameStyles[nextStyle].label}”风格。`); } };
-  const selectTemplate = (genre: GameSpec["genre"]) => { clearGenerationMessages(); const nextGame = createStyledDemoGame(style, genre), nextPrompt = prompts[genre]; setPrompt(nextPrompt); setSource(genre); setGame(nextGame); setRequirementMatch(evaluateRequirementMatch(extractGameIntent(nextPrompt), nextGame)); setMode("demo"); setPreviewSource("template"); setProjectId(undefined); markUnsaved(); setResetToken((token) => token + 1); setActivityNotice(`已载入${genre === "dodge" ? "星际闪避" : genre === "collect" ? "接金币" : genre === "maze" ? "迷你迷宫" : "贪吃蛇"} Demo。`); };
+  const selectTemplate = (genre: GameSpec["genre"]) => { clearGenerationMessages(); const nextGame = createStyledDemoGame(style, genre), nextPrompt = prompts[genre]; setPrompt(nextPrompt); setSource(genre); setGame(nextGame); setRequirementMatch(evaluateRequirementMatch(extractGameIntent(nextPrompt), nextGame)); setMode("demo"); setPreviewSource("template"); setProjectId(undefined); markUnsaved(); setResetToken((token) => token + 1); setActivityNotice(`已载入${genre === "dodge" ? "星际闪避" : genre === "collect" ? "接金币" : genre === "maze" ? "迷你迷宫" : genre === "snake" ? "贪吃蛇" : "经典 2048"} Demo。`); };
   const editPrompt = (value: string) => { setPrompt(value); setSource("custom"); setRequirementMatch(emptyMatch()); clearGenerationMessages(); markUnsaved(); };
   const saveProject = () => { setSaveStatus("saving"); try { const saved = saveGame(window.localStorage, buildDraft(), projectId); setProjectId(saved.id); setSaveStatus("saved"); clearGenerationMessages(); setActivityNotice("作品已保存到当前浏览器的作品库。"); } catch { setSaveStatus("failed"); clearGenerationMessages(); setFeedback(errorGenerationFeedback("本地作品保存失败，请检查浏览器存储空间后重试。")); } };
   const exportProject = () => { try { const saved = createSavedGame(buildDraft()), blob = new Blob([exportSavedGameJson(saved)], { type: "application/json" }), url = URL.createObjectURL(blob), link = document.createElement("a"); link.href = url; link.download = createExportFilename(game.title); link.click(); URL.revokeObjectURL(url); clearGenerationMessages(); setActivityNotice("JSON 作品文件已导出。"); } catch { clearGenerationMessages(); setFeedback(errorGenerationFeedback("作品导出失败，请稍后重试。")); } };

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { collectDemoGame, demoGame, mazeDemoGame, snakeDemoGame } from "@/data/demo-game";
+import { collectDemoGame, demoGame, game2048DemoGame, mazeDemoGame, snakeDemoGame } from "@/data/demo-game";
 import { applyExplicitRequirements, evaluateRequirementMatch, extractGameIntent, hasUnsupportedIntent } from "./game-intent";
 
 describe("受控需求解析", () => {
@@ -7,7 +7,8 @@ describe("受控需求解析", () => {
   it("映射海底珍珠收集需求", () => { const intent = extractGameIntent("生成海底接金币游戏，30 秒内接到 15 颗珍珠，三条生命，躲避水母"); expect(intent).toMatchObject({ genre: "collect", visualTheme: "ocean", duration: 30, targetCount: 15, lives: 3 }); expect(intent.collectibleKeywords).toContain("珍珠"); expect(intent.hazardKeywords).toContain("水母"); });
   it("映射熔岩躲避需求", () => { expect(extractGameIntent("熔岩主题的陨石躲避游戏")).toMatchObject({ genre: "dodge", visualTheme: "lava" }); });
   it("将用户明确数字覆盖受控配置", () => { const intent = extractGameIntent("海底接金币，30 秒内接住 15 颗珍珠，三条生命，躲避水母"); const game = applyExplicitRequirements(collectDemoGame, intent); expect(game.world.duration).toBe(30); expect(game.player.lives).toBe(3); if (game.genre === "collect") expect(game.collect).toMatchObject({ targetCount: 15, collectibleKind: "pearl", hazardKind: "jellyfish" }); });
-  it("映射贪吃蛇并保留 2048 为不支持玩法", () => { const snake = extractGameIntent("做一个贪吃蛇游戏，蛇吃食物后身体变长"); expect(snake.genre).toBe("snake"); expect(hasUnsupportedIntent(snake)).toBe(false); const unsupported = extractGameIntent("生成 2048 小游戏"); expect(hasUnsupportedIntent(unsupported)).toBe(true); });
+  it("映射贪吃蛇与 2048 数字方块", () => { const snake = extractGameIntent("做一个贪吃蛇游戏，蛇吃食物后身体变长"); expect(snake.genre).toBe("snake"); expect(hasUnsupportedIntent(snake)).toBe(false); const game2048 = extractGameIntent("生成一个 2048 合并数字方块游戏"); expect(game2048.genre).toBe("2048"); expect(hasUnsupportedIntent(game2048)).toBe(false); });
+  it("匹配 2048 目标数字", () => { const intent = extractGameIntent("冰雪主题 2048，合成 2048"); expect(evaluateRequirementMatch(intent, game2048DemoGame).primarySatisfied).toBe(true); });
   it("匹配贪吃蛇需求", () => { const intent = extractGameIntent("霓虹贪吃蛇，蛇吃食物后身体变长"); expect(evaluateRequirementMatch(intent, snakeDemoGame).primarySatisfied).toBe(true); });
   it("给出可展示的需求匹配状态", () => { const intent = extractGameIntent("冰雪迷宫，20 秒内找到出口"); const game = applyExplicitRequirements(mazeDemoGame, intent); const match = evaluateRequirementMatch(intent, game); expect(match.primarySatisfied).toBe(true); expect(match.met).toContain("视觉主题"); expect(match.met).toContain("游戏时长"); expect(evaluateRequirementMatch(extractGameIntent("熔岩躲避"), demoGame).primarySatisfied).toBe(false); });
 });

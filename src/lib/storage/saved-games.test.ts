@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { demoGame, snakeDemoGame } from "@/data/demo-game";
+import { demoGame, game2048DemoGame, snakeDemoGame } from "@/data/demo-game";
 import { MAX_SAVED_GAMES, SAVED_GAMES_STORAGE_KEY, createExportFilename, createSavedGame, ensureImportSize, exportSavedGameJson, importSavedGameJson, readSavedGames, saveGame } from "@/lib/storage/saved-games";
 
 class MemoryStorage {
@@ -58,6 +58,7 @@ describe("saved games storage", () => {
   });
 
   it("saves, exports and imports a snake game without changing its genre", () => { const saved = createSavedGame({ ...draft, gameSpec: snakeDemoGame, source: "template" }, { id: "snake", updatedAt: "2026-08-15T00:00:00.000Z" }); const imported = importSavedGameJson(exportSavedGameJson(saved), { id: "snake-copy", now: "2026-08-15T01:00:00.000Z" }); expect(imported.id).toBe("snake-copy"); expect(imported.gameSpec.genre).toBe("snake"); });
+  it("saves, exports and imports a 2048 game without changing its genre", () => { const saved = createSavedGame({ ...draft, gameSpec: game2048DemoGame, source: "template" }, { id: "2048", updatedAt: "2026-08-16T00:00:00.000Z" }); const imported = importSavedGameJson(exportSavedGameJson(saved), { id: "2048-copy", now: "2026-08-16T01:00:00.000Z" }); expect(imported.gameSpec.genre).toBe("2048"); });
 
   it("limits import size and only exports safe saved-game fields", () => {
     expect(() => ensureImportSize(100 * 1024 + 1)).toThrow("100 KB");

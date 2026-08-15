@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { collectDemoGame, createStyledDemoGame, demoGame, demoGameStyles, mazeDemoGame, snakeDemoGame } from "@/data/demo-game";
+import { collectDemoGame, createStyledDemoGame, demoGame, demoGameStyles, game2048DemoGame, mazeDemoGame, snakeDemoGame } from "@/data/demo-game";
 import { GameSpecSchema, GenerateRequestSchema } from "./game-spec";
 
 describe("GameSpecSchema", () => {
   it("accepts the playable demo game", () => { expect(GameSpecSchema.safeParse(demoGame).success).toBe(true); });
-  it("accepts all four supported game genres", () => { expect(GameSpecSchema.safeParse(collectDemoGame).success).toBe(true); expect(GameSpecSchema.safeParse(mazeDemoGame).success).toBe(true); expect(GameSpecSchema.safeParse(snakeDemoGame).success).toBe(true); });
+  it("accepts all five supported game genres", () => { expect(GameSpecSchema.safeParse(collectDemoGame).success).toBe(true); expect(GameSpecSchema.safeParse(mazeDemoGame).success).toBe(true); expect(GameSpecSchema.safeParse(snakeDemoGame).success).toBe(true); expect(GameSpecSchema.safeParse(game2048DemoGame).success).toBe(true); });
+  it("rejects invalid 2048 settings", () => { expect(GameSpecSchema.safeParse({ ...game2048DemoGame, game2048: { ...game2048DemoGame.game2048, boardSize: 5 } }).success).toBe(false); expect(GameSpecSchema.safeParse({ ...game2048DemoGame, game2048: { ...game2048DemoGame.game2048, targetTile: 1000 } }).success).toBe(false); });
   it("rejects unsafe snake configuration", () => { expect(GameSpecSchema.safeParse({ ...snakeDemoGame, snake: { ...snakeDemoGame.snake, columns: 4 } }).success).toBe(false); expect(GameSpecSchema.safeParse({ ...snakeDemoGame, snake: { ...snakeDemoGame.snake, tickInterval: 2 } }).success).toBe(false); });
   it("rejects invalid genre and cross-genre configuration", () => { expect(GameSpecSchema.safeParse({ ...collectDemoGame, genre: "shoot" }).success).toBe(false); expect(GameSpecSchema.safeParse({ ...collectDemoGame, enemies: demoGame.enemies }).success).toBe(false); });
   it("accepts safe collect visuals and rejects unknown kinds", () => { const underwater={...collectDemoGame,title:"海底珍珠挑战",world:{...collectDemoGame.world,duration:30},player:{...collectDemoGame.player,lives:3},collect:{...collectDemoGame.collect,targetCount:15,collectibleKind:"pearl" as const,hazardKind:"jellyfish" as const}}; expect(GameSpecSchema.safeParse(underwater).success).toBe(true); expect(GameSpecSchema.safeParse({...underwater,collect:{...underwater.collect,collectibleKind:"url"}}).success).toBe(false); });
