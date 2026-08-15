@@ -1,3 +1,5 @@
+[![CI](https://github.com/HunmiJ/ai-minigame-studio/actions/workflows/ci.yml/badge.svg)](https://github.com/HunmiJ/ai-minigame-studio/actions/workflows/ci.yml)
+
 # AI MiniGame Studio
 
 > **在线试玩：** https://ai-minigame-studio.onrender.com
